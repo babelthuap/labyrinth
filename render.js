@@ -1,3 +1,4 @@
+// The cell values, needed to make sense of the output of generateLabyrinth.
 const Cell = {
   NEITHER: 0,
   RIGHT: 1,
@@ -5,6 +6,7 @@ const Cell = {
   BOTH: 3,
 };
 
+/** Renders with thick, chunky walls. */
 export function renderBlocky(labyrinth) {
   const grid = toGrid(labyrinth);
   const labyrinthEl = document.getElementById('labyrinth-el');
@@ -47,6 +49,7 @@ function toGrid({cells, width}) {
   return {walls, width: gridWidth};
 }
 
+// CSS classes
 const SLIM_CELL_CLASS = {
   [Cell.NEITHER]: 'neither',
   [Cell.RIGHT]: 'right',
@@ -54,6 +57,7 @@ const SLIM_CELL_CLASS = {
   [Cell.BOTH]: 'both',
 };
 
+/** Renders with thin hamster. */
 export function renderHairline(labyrinth) {
   const labyrinthEl = document.getElementById('labyrinth-el');
 

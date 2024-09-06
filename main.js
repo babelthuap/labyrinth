@@ -7,7 +7,7 @@ const labyrinthEl = document.getElementById('labyrinth-el');
 let labyrinth;
 
 function regenerate() {
-  console.time('render');
+  console.time('regenerate');
   const width = (window.innerWidth >> 5) - 1;
   const height = (window.innerHeight >> 5) - 1;
   labyrinth = generateLabyrinth(width, height);
@@ -19,13 +19,14 @@ function regenerate() {
       renderBlocky(labyrinth);
       break;
   }
-  console.timeEnd('render');
+  console.timeEnd('regenerate');
 }
 
 labyrinthEl.addEventListener('click', regenerate);
 regenerate();
 
 renderStyleEl.addEventListener('click', () => {
+  console.time('rerender');
   switch (renderStyleEl.textContent) {
     case 'hairline':
       renderStyleEl.textContent = 'blocky';
@@ -36,4 +37,5 @@ renderStyleEl.addEventListener('click', () => {
       renderHairline(labyrinth);
       break;
   }
+  console.timeEnd('rerender');
 });
