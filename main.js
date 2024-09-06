@@ -7,7 +7,7 @@ const Cell = {
   BOTH: 3,
 };
 
-function generate(width, height) {
+function generateLabyrinth(width, height) {
   const numTiles = width * height;
   const tiles = new Uint8Array(numTiles);
   const stack = [rand(numTiles)];
@@ -81,15 +81,15 @@ function toGrid({tiles, width}) {
       }
     }
   }
-  return {walls, gridWidth};
+  return {walls, width: gridWidth};
 }
 
 function render(labyrinth) {
   console.time('render');
-  const {walls, gridWidth} = toGrid(labyrinth);
+  const grid = toGrid(labyrinth);
   labyrinthEl.innerHTML = '';
-  labyrinthEl.style.width = `${gridWidth * 16}px`;
-  for (const wall of walls) {
+  labyrinthEl.style.width = `${grid.width * 16}px`;
+  for (const wall of grid.walls) {
     const div = document.createElement('div');
     if (wall) {
       div.classList.add('wall');
@@ -102,7 +102,7 @@ function render(labyrinth) {
 function fillScreen() {
   const width = (window.innerWidth >> 5) - 1;
   const height = (window.innerHeight >> 5) - 1;
-  const labyrinth = generate(width, height);
+  const labyrinth = generateLabyrinth(width, height);
   render(labyrinth);
 }
 
