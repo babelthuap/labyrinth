@@ -5,6 +5,13 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: #aaa;
+}
+
+#render-style {
+  position: fixed;
+  top: 4px;
+  left: 4px;
 }
 
 #labyrinth-el {
@@ -12,11 +19,43 @@ body {
   flex-wrap: wrap;
 }
 
-#labyrinth-el>div {
+#labyrinth-el.blocky>div {
   height: 16px;
   width: 16px;
+
+  &.wall {
+    background-color: black;
+  }
 }
 
-.wall {
-  background-color: black;
+#labyrinth-el.hairline {
+  border-top: 1px solid black;
+  border-left: 1px solid black;
+
+  &>div {
+    height: 31px;
+    width: 31px;
+    border-right: 1px solid;
+    border-bottom: 1px solid;
+
+    &.neither {
+      border-right-color: black;
+      border-bottom-color: black;
+    }
+
+    &.right {
+      border-right-color: rgba(0, 0, 0, 0);
+      border-bottom-color: black;
+    }
+
+    &.down {
+      border-right-color: black;
+      border-bottom-color: rgba(0, 0, 0, 0);
+    }
+
+    &.both {
+      border-right-color: rgba(0, 0, 0, 0);
+      border-bottom-color: rgba(0, 0, 0, 0);
+    }
+  }
 }
