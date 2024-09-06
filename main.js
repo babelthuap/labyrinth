@@ -48,8 +48,8 @@ function toGrid({tiles, width}) {
   const gridWidth = 1 + 2 * width;
   const walls = new Array(gridHeight * gridWidth).fill(true);
   for (let y = 0; y < height; y++) {
+    const gy = 2 * y + 1;
     for (let x = 0; x < width; x++) {
-      const gy = 2 * y + 1;
       const gx = 2 * x + 1;
       walls[gy * gridWidth + gx] = false;
       switch (tiles[y * width + x]) {
