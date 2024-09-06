@@ -10,6 +10,7 @@ const Cell = {
 function generateLabyrinth(width, height) {
   const numTiles = width * height;
   const tiles = new Uint8Array(numTiles);
+  // Do a randomized DFS through the tiles
   const stack = [rand(numTiles)];
   const visited = new Uint8Array(numTiles);
   const nbrs = new Uint32Array(4);
@@ -28,9 +29,9 @@ function generateLabyrinth(width, height) {
       const nbr = nbrs[rand(n)];
       stack.push(nbr);
       if (Math.abs(cur - nbr) === 1) {
-        tiles[nbr > cur ? cur : nbr] += 1;  // left or right
+        tiles[nbr < cur ? nbr : cur] += 1;  // left or right
       } else {
-        tiles[nbr > cur ? cur : nbr] += 2;  // up or down
+        tiles[nbr < cur ? nbr : cur] += 2;  // up or down
       }
     }
   }
