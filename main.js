@@ -12,41 +12,25 @@ function generateLabyrinth(width, height) {
   const tiles = new Uint8Array(numTiles);
   const stack = [rand(numTiles)];
   const visited = new Uint8Array(numTiles);
-  const unvisitedNeighbors = new Uint32Array(4);
+  const nbrs = new Uint32Array(4);
   while (stack.length > 0) {
     const cur = stack[stack.length - 1];
     visited[cur] = 1;
     const x = cur % width;
-    let numNeighbors = 0;
-    if (visited[cur - width] === 0) {
-      unvisitedNeighbors[numNeighbors++] = cur - width;  // up
-    }
-    if (visited[cur + width] === 0) {
-      unvisitedNeighbors[numNeighbors++] = cur + width;  // down
-    }
-    if (x > 0 && visited[cur - 1] === 0) {
-      unvisitedNeighbors[numNeighbors++] = cur - 1;  // left
-    }
-    if (x < width - 1 && visited[cur + 1] === 0) {
-      unvisitedNeighbors[numNeighbors++] = cur + 1;  // right
-    }
-    if (numNeighbors === 0) {
+    let n = 0;
+    if (visited[cur - width] === 0) nbrs[n++] = cur - width;           // up
+    if (visited[cur + width] === 0) nbrs[n++] = cur + width;           // down
+    if (x > 0 && visited[cur - 1] === 0) nbrs[n++] = cur - 1;          // left
+    if (x < width - 1 && visited[cur + 1] === 0) nbrs[n++] = cur + 1;  // right
+    if (n === 0) {
       stack.pop();
     } else {
-      const nbr = unvisitedNeighbors[rand(numNeighbors)];
+      const nbr = nbrs[rand(n)];
       stack.push(nbr);
       if (Math.abs(cur - nbr) === 1) {
-        if (nbr > cur) {
-          tiles[cur] += 1;  // right
-        } else {
-          tiles[nbr] += 1;  // left
-        }
+        tiles[nbr > cur ? cur : nbr] += 1;  // left or right
       } else {
-        if (nbr > cur) {
-          tiles[cur] += 2;  // down
-        } else {
-          tiles[nbr] += 2;  // up
-        }
+        tiles[nbr > cur ? cur : nbr] += 2;  // up or down
       }
     }
   }
