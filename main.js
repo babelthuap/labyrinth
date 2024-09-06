@@ -48,20 +48,20 @@ function toGrid({tiles, width}) {
   const gridWidth = 1 + 2 * width;
   const walls = new Array(gridHeight * gridWidth).fill(true);
   for (let y = 0; y < height; y++) {
-    const gy = 2 * y + 1;
+    const offset = ((y << 1) + 1) * gridWidth;
     for (let x = 0; x < width; x++) {
-      const gx = 2 * x + 1;
-      walls[gy * gridWidth + gx] = false;
+      const g = offset + (x << 1) + 1;
+      walls[g] = false;
       switch (tiles[y * width + x]) {
         case Cell.RIGHT:
-          walls[gy * gridWidth + gx + 1] = false;
+          walls[g + 1] = false;
           break;
         case Cell.DOWN:
-          walls[(gy + 1) * gridWidth + gx] = false;
+          walls[g + gridWidth] = false;
           break;
         case Cell.BOTH:
-          walls[(gy + 1) * gridWidth + gx] = false;
-          walls[gy * gridWidth + gx + 1] = false;
+          walls[g + gridWidth] = false;
+          walls[g + 1] = false;
           break;
       }
     }
@@ -70,7 +70,6 @@ function toGrid({tiles, width}) {
 }
 
 function render(labyrinth) {
-  console.time('render');
   const grid = toGrid(labyrinth);
   labyrinthEl.innerHTML = '';
   labyrinthEl.style.width = `${grid.width * 16}px`;
@@ -81,14 +80,15 @@ function render(labyrinth) {
     }
     labyrinthEl.append(div);
   }
-  console.timeEnd('render');
 }
 
 function fillScreen() {
+  console.time('render');
   const width = (window.innerWidth >> 5) - 1;
   const height = (window.innerHeight >> 5) - 1;
   const labyrinth = generateLabyrinth(width, height);
   render(labyrinth);
+  console.timeEnd('render');
 }
 
 window.addEventListener('click', fillScreen);
