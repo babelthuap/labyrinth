@@ -57,10 +57,6 @@ const SLIM_CELL_CLASS = {
 export function renderHairline(labyrinth) {
   const labyrinthEl = document.getElementById('labyrinth-el');
 
-  console.log(labyrinth);
-  console.log(labyrinthEl);
-  
-
   labyrinthEl.innerHTML = '';
   labyrinthEl.classList = 'hairline';
   // Get the actual width of a hairline div
