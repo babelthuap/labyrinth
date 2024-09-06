@@ -61,35 +61,35 @@ function toGrid({tiles, width}) {
   const height = tiles.length / width;
   const gridHeight = 1 + 2 * height;
   const gridWidth = 1 + 2 * width;
-  const grid = new Array(gridHeight * gridWidth).fill(true);
+  const walls = new Array(gridHeight * gridWidth).fill(true);
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
       const gy = 2 * y + 1;
       const gx = 2 * x + 1;
-      grid[gy * gridWidth + gx] = false;
+      walls[gy * gridWidth + gx] = false;
       switch (tiles[y * width + x]) {
         case Cell.RIGHT:
-          grid[gy * gridWidth + gx + 1] = false;
+          walls[gy * gridWidth + gx + 1] = false;
           break;
         case Cell.DOWN:
-          grid[(gy + 1) * gridWidth + gx] = false;
+          walls[(gy + 1) * gridWidth + gx] = false;
           break;
         case Cell.BOTH:
-          grid[(gy + 1) * gridWidth + gx] = false;
-          grid[gy * gridWidth + gx + 1] = false;
+          walls[(gy + 1) * gridWidth + gx] = false;
+          walls[gy * gridWidth + gx + 1] = false;
           break;
       }
     }
   }
-  return {grid, gridWidth};
+  return {walls, gridWidth};
 }
 
 function render(labyrinth) {
   console.time('render');
-  const {grid, gridWidth} = toGrid(labyrinth);
+  const {walls, gridWidth} = toGrid(labyrinth);
   labyrinthEl.innerHTML = '';
   labyrinthEl.style.width = `${gridWidth * 16}px`;
-  for (const wall of grid) {
+  for (const wall of walls) {
     const div = document.createElement('div');
     if (wall) {
       div.classList.add('wall');
