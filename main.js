@@ -8,58 +8,57 @@ const Cell = {
 };
 
 function generate(width, height) {
-  const labyrinth = new Array(height);
-  for (let i = 0; i < height; i++) {
-    labyrinth[i] = new Array(width).fill(Cell.NEITHER);
-  }
-  const stack = [{y: rand(height), x: rand(width)}];
-  const visited = new Array(width * height);
+  const numTiles = width * height;
+  const tiles = new Uint8Array(numTiles);
+  const stack = [rand(numTiles)];
+  const visited = new Uint8Array(numTiles);
+  const unvisitedNeighbors = [];
   while (stack.length > 0) {
-    const {y, x} = stack[stack.length - 1];
-    visited[y * width + x] = true;
-    const unvisitedNeighbors = [];
-    if (y > 0 && !visited[(y - 1) * width + x]) {
-      unvisitedNeighbors.push({y: y - 1, x});
+    const cur = stack[stack.length - 1];
+    visited[cur] = 1;
+    const x = cur % width;
+    unvisitedNeighbors.length = 0;
+    if (visited[cur - width] === 0) {
+      unvisitedNeighbors.push(cur - width);  // up
     }
-    if (y < height - 1 && !visited[(y + 1) * width + x]) {
-      unvisitedNeighbors.push({y: y + 1, x});
+    if (visited[cur + width] === 0) {
+      unvisitedNeighbors.push(cur + width);  // down
     }
-    if (x > 0 && !visited[y * width + x - 1]) {
-      unvisitedNeighbors.push({y, x: x - 1});
+    if (x > 0 && visited[cur - 1] === 0) {
+      unvisitedNeighbors.push(cur - 1);  // left
     }
-    if (x < width - 1 && !visited[y * width + x + 1]) {
-      unvisitedNeighbors.push({y, x: x + 1});
+    if (x < width - 1 && visited[cur + 1] === 0) {
+      unvisitedNeighbors.push(cur + 1);  // right
     }
     if (unvisitedNeighbors.length === 0) {
       stack.pop();
     } else {
       const nbr = unvisitedNeighbors[rand(unvisitedNeighbors.length)];
       stack.push(nbr);
-      if (nbr.y === y) {
-        if (nbr.x > x) {
-          labyrinth[y][x] += 1;  // right
+      if (Math.abs(cur - nbr) === 1) {
+        if (nbr > cur) {
+          tiles[cur] += 1;  // right
         } else {
-          labyrinth[nbr.y][nbr.x] += 1;  // left
+          tiles[nbr] += 1;  // left
         }
       } else {
-        if (nbr.y > y) {
-          labyrinth[y][x] += 2;  // down
+        if (nbr > cur) {
+          tiles[cur] += 2;  // down
         } else {
-          labyrinth[nbr.y][nbr.x] += 2;  // up
+          tiles[nbr] += 2;  // up
         }
       }
     }
   }
-  return labyrinth;
+  return {tiles, width};
 }
 
 function rand(n) {
   return Math.floor(Math.random() * n);
 }
 
-function toGrid(labyrinth) {
-  const height = labyrinth.length;
-  const width = labyrinth[0].length;
+function toGrid({tiles, width}) {
+  const height = tiles.length / width;
   const grid = new Array(1 + 2 * height);
   for (let i = 0; i < grid.length; i++) {
     grid[i] = new Array(1 + 2 * width).fill(true);
@@ -69,7 +68,7 @@ function toGrid(labyrinth) {
       const gy = 2 * y + 1;
       const gx = 2 * x + 1;
       grid[gy][gx] = false;
-      switch (labyrinth[y][x]) {
+      switch (tiles[y * width + x]) {
         case Cell.RIGHT:
           grid[gy][gx + 1] = false;
           break;
@@ -89,9 +88,9 @@ function toGrid(labyrinth) {
 function render(labyrinth) {
   console.time('render');
   const grid = toGrid(labyrinth);
-  const width = grid[0].length;
+  const gridWidth = grid[0].length;
   labyrinthEl.innerHTML = '';
-  labyrinthEl.style.width = `${width * 16}px`;
+  labyrinthEl.style.width = `${gridWidth * 16}px`;
   let i = 0;
   for (const row of grid) {
     for (const wall of row) {
@@ -105,11 +104,11 @@ function render(labyrinth) {
   console.timeEnd('render');
 }
 
-
 function fillScreen() {
   const width = (window.innerWidth >> 5) - 1;
   const height = (window.innerHeight >> 5) - 1;
-  render(generate(width, height));
+  const labyrinth = generate(width, height);
+  render(labyrinth);
 }
 
 window.addEventListener('click', fillScreen);
