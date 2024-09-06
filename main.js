@@ -59,47 +59,42 @@ function rand(n) {
 
 function toGrid({tiles, width}) {
   const height = tiles.length / width;
-  const grid = new Array(1 + 2 * height);
-  for (let i = 0; i < grid.length; i++) {
-    grid[i] = new Array(1 + 2 * width).fill(true);
-  }
+  const gridHeight = 1 + 2 * height;
+  const gridWidth = 1 + 2 * width;
+  const grid = new Array(gridHeight * gridWidth).fill(true);
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
       const gy = 2 * y + 1;
       const gx = 2 * x + 1;
-      grid[gy][gx] = false;
+      grid[gy * gridWidth + gx] = false;
       switch (tiles[y * width + x]) {
         case Cell.RIGHT:
-          grid[gy][gx + 1] = false;
+          grid[gy * gridWidth + gx + 1] = false;
           break;
         case Cell.DOWN:
-          grid[gy + 1][gx] = false;
+          grid[(gy + 1) * gridWidth + gx] = false;
           break;
         case Cell.BOTH:
-          grid[gy + 1][gx] = false;
-          grid[gy][gx + 1] = false;
+          grid[(gy + 1) * gridWidth + gx] = false;
+          grid[gy * gridWidth + gx + 1] = false;
           break;
       }
     }
   }
-  return grid;
+  return {grid, gridWidth};
 }
 
 function render(labyrinth) {
   console.time('render');
-  const grid = toGrid(labyrinth);
-  const gridWidth = grid[0].length;
+  const {grid, gridWidth} = toGrid(labyrinth);
   labyrinthEl.innerHTML = '';
   labyrinthEl.style.width = `${gridWidth * 16}px`;
-  let i = 0;
-  for (const row of grid) {
-    for (const wall of row) {
-      const div = document.createElement('div');
-      if (wall) {
-        div.classList.add('wall');
-      }
-      labyrinthEl.append(div);
+  for (const wall of grid) {
+    const div = document.createElement('div');
+    if (wall) {
+      div.classList.add('wall');
     }
+    labyrinthEl.append(div);
   }
   console.timeEnd('render');
 }
