@@ -12,28 +12,28 @@ function generate(width, height) {
   const tiles = new Uint8Array(numTiles);
   const stack = [rand(numTiles)];
   const visited = new Uint8Array(numTiles);
-  const unvisitedNeighbors = [];
+  const unvisitedNeighbors = new Uint32Array(4);
   while (stack.length > 0) {
     const cur = stack[stack.length - 1];
     visited[cur] = 1;
     const x = cur % width;
-    unvisitedNeighbors.length = 0;
+    let numNeighbors = 0;
     if (visited[cur - width] === 0) {
-      unvisitedNeighbors.push(cur - width);  // up
+      unvisitedNeighbors[numNeighbors++] = cur - width;  // up
     }
     if (visited[cur + width] === 0) {
-      unvisitedNeighbors.push(cur + width);  // down
+      unvisitedNeighbors[numNeighbors++] = cur + width;  // down
     }
     if (x > 0 && visited[cur - 1] === 0) {
-      unvisitedNeighbors.push(cur - 1);  // left
+      unvisitedNeighbors[numNeighbors++] = cur - 1;  // left
     }
     if (x < width - 1 && visited[cur + 1] === 0) {
-      unvisitedNeighbors.push(cur + 1);  // right
+      unvisitedNeighbors[numNeighbors++] = cur + 1;  // right
     }
-    if (unvisitedNeighbors.length === 0) {
+    if (numNeighbors === 0) {
       stack.pop();
     } else {
-      const nbr = unvisitedNeighbors[rand(unvisitedNeighbors.length)];
+      const nbr = unvisitedNeighbors[rand(numNeighbors)];
       stack.push(nbr);
       if (Math.abs(cur - nbr) === 1) {
         if (nbr > cur) {
