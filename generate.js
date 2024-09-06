@@ -3,13 +3,16 @@
 const nbrs = new Uint32Array(4);
 
 /**
- * Generates a labyrinth, expressed as an array of square cells. Each cell is in
+ * Generates a labyrinth, expressed as a grid of square cells. Each cell is in
  * one of four states, stored as ints:
  *
- * - 0: Has a wall on both to the right and down
+ * - 0: Has a wall both to the right and down
  * - 1: Has a wall to the right, but is open down
  * - 2: Has a wall down, but is open right
  * - 3: Is open both to the right and down
+ *
+ * We don't need to store info about the "left" and "up" walls, since that would
+ * be redundant. And we are very un-redundant people.
  *
  * The returned array `cells` is a flat (1D) array, but logically represents a
  * grid of the given width and height when laid out from left-to-right,
